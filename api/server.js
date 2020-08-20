@@ -38,7 +38,7 @@ server.delete("/users/:id", (req, res) => {
       res.status(204).json({ deleted: `User with id ${req.params.id}` });
     })
     .catch((err) => {
-      res.status(500).json({ error: err.message });
+      if (!res.headersSent) res.status(500).json({ error: err.message });
     });
 });
 
