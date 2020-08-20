@@ -1,0 +1,35 @@
+const request = require("supertest");
+const server = require("./server");
+const db = require("../data/db-config");
+
+describe("server", () => {
+  beforeEach(async () => {
+    await db("users").truncate();
+  });
+
+  describe("POST /users", () => {
+    it("posts a new user", async () => {
+      let res = await request(server).get("/users");
+
+      expect(res.body.users).toHaveLength(0);
+
+      await request(server).post("/users").send({ name: "Christian" });
+
+      res = await request(server).get("/users");
+
+      expect(res.body.users).toHaveLength(1);
+    });
+
+    it("doesn't add user if req.body is empty", async () => {
+      let res = await request(server).get("/users");
+
+      expect(res.body.users).toHaveLength(0);
+
+      await request(server).post("/users").send({});
+
+      res = await request(server).get("/users");
+
+      expect(res.body.users).toHaveLength(0);
+    });
+  });
+});
